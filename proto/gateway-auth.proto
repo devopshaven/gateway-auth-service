@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+option go_package = "github.com/devopshaven/gateway-auth-service/internal/pb";
+option csharp_namespace = "Stemx.Grpc.Card";
+option java_multiple_files = true;
+option java_package = "com.interticket.proto.card";
+
+// GatewayAuthService service for authorizing request in DevOps Haven API Gateway.
+service GatewayAuthService {
+    // Authorize authorization request with request headers and url.
+    rpc Authorize(AuthorizeRequest) returns (AuthorizeResponse);
+}
+
+// AuthorizeRequest request payload for authorization from the API gateway.
+message AuthorizeRequest {
+    // Host the host of the request.
+    string host = 1;
+    // Method the HTTP method (eg.: HEAD)
+    string method = 2;
+    // RequestUrl the requested URL.
+    string request_url = 3;
+    // RequestHeaders the headers from the request
+    repeated Header request_headers = 4;
+}
+
+// AuthorizationResponse authorization response with status.
+message AuthorizeResponse {
+    // StatusCode modifies the statuscode if ReplaceContent is true.
+    int32 status_code = 1;
+    // ErrorMessage error message.
+    string error_message = 2;
+    // RemoveHaders you can define a list of headers which will be removed from the upstream.
+    repeated string remove_headers = 3;
+    // AdditionalHeaders send additional headers to the upstream.
+    repeated Header additional_headers = 4;
+    // ReplaceContent replaces the response content. This will prevent the gateway to send the request to the upstream.
+    bool replace_content = 5;
+    // Content when ReplaceContent variable is true, this content will be sent back to the caller.
+    bytes content = 6;
+    // Block block or accept the path to the upstream.
+    bool block = 7;
+}
+
+// HeaderMessage header message.
+message Header {
+    // Name header name.
+    string name = 1;
+    // Values the header value(s).
+    repeated string values = 2;
+}
